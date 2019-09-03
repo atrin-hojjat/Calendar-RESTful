@@ -21,8 +21,6 @@ create table users (
 
 create table calendars (
 	cname varchar(32) not null,
-	admin_role serial not null,
-	everyone_role serial not null,
 	id serial primary key);
 
 create table tasks (
@@ -36,7 +34,9 @@ create table tasks (
 
 create table roles (
 	id serial primary key,
+	name varchar(32) not null,
 	cname serial not null,
+	edit_calendar boolean not null,
 	edit_task boolean not null,
 	edit_roles boolean not null,
 	edit_users boolean not null,
