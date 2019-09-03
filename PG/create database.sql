@@ -18,3 +18,32 @@ create table users (
 	email varchar(50) NOT NULL,
 	password varchar NOT NULL,
 	id SERIAL PRIMARY KEY);
+
+create table calendars (
+	cname varchar(32) not null,
+	admin_role serial not null,
+	everyone_role serial not null,
+	id serial primary key);
+
+create table tasks (
+	tname varchar(32) not null,
+	description varchar(256),
+	cname serial not null,
+	sdate date not null,
+	edate date not null,
+	repeated date,
+	id SERIAL PRIMARY KEY);
+
+create table roles (
+	id serial primary key,
+	cname serial not null,
+	edit_task boolean not null,
+	edit_roles boolean not null,
+	edit_users boolean not null,
+	comment boolean not null,
+	see boolean not null);
+
+create table user_roles (
+	username serial not null,
+	calendar serial not null,
+	role serial not null);

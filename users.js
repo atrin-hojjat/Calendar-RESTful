@@ -133,4 +133,4 @@ router.delete("/delete/confirm", (req, res) => {
 });
 
 
-module.exports = {router: router, tokenVerifier: validate};
+module.exports = {router: router, validateToken: validate};
