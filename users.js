@@ -70,14 +70,21 @@ var checkValidEmail = async function(email) {
   return true;
 }
 
-var loginfunc = async (req, res) => {
+var longin_with_req = async (req, res) {
   let usr = await getUser(req.body.username);
+  let psd = req.body.password;
+
+  return loginfunc(usr, psd, res);
+
+}
+
+var loginfunc = async (usr, psd, res) => {
   if(usr === null || usr === undefined) 
     return res.status(406).send({auth: false,
       message: "Username not found"});
-  if(usr.password === sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(req.body.password)) ) {
+  if(usr.password === sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(psd)) ) {
     let tok = jwt.sign({username: usr.username, id: usr.id, seed: process.env.SEED}, secret, { expiresIn: '2h'});
-    return res.status(200).send({auth: true, token: tok});
+    return res.status(200).send({auth: true, "x-access-token": tok});
   } else {
     return res.status(406).send({auth: false,
       message: "Incorrect Password"});
@@ -95,7 +102,8 @@ router.put("/singup", async (req, res) => {
         console.log(err);
         return res.status(500).send({auth: false, message: "Failed to connect With Database"});
       }
-      return res.status(200).send({auth: false, message: "You have successfully signed up, please login now"});
+      return loginfunc(req.body.email, req.body.password, res);
+//      return res.status(200).send({auth: false, message: "You have successfully signed up, please login now"});
     });
   } else {
     return res.status(406).send({auth: false, 
@@ -103,7 +111,7 @@ router.put("/singup", async (req, res) => {
   }
 });
 
-router.post("/login", loginfunc);
+router.post("/login", login_with_req);
 
 router.get("/user", async (req, res) => {
   let tok;
