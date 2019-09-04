@@ -126,19 +126,6 @@ router.get("/user", async (req, res) => {
   return res.status(200).send(usr);
 });
 
-router.get("/users/:srch", async (req, res) => {
-  let str = req.params.srch;
-  return await pool
-    .query("select username, id from users where username like '%$1%'", str)
-    .then((resp) => {
-      return res.status(200).send(resp.rows);
-    })
-    .catch(err => {
-      console.error(err.stack);
-      return res.status(500).send({message: "Internal Server Error"});
-    });
-});
-
 router.delete("/delete", async (req, res) => {
   let tok;
   if(!(tok = await validate(req))[auth]) {
