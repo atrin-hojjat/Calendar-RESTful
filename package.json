@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "latest",
     "jsonwebtoken": "^8.5.1",
     "pg": "^7.12.1",

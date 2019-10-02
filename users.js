@@ -6,19 +6,14 @@ const { Pool } = require("pg");
 const config = require('./config.json');
 
 //const pool = new Pool();
-const pool = new Pool({
-  user: 'atrinhojjat',
-  host: 'localhost',
-  database: config.database,
-  password: '',
-  port: 5432
-})
+const pool = new Pool()
 
+const tok_attr = 'auth_token';
 
 var secret = process.env.SECRET;
 
 var validate = async function(req) {
-  let token = req.headers['x-access-token'];
+  let token = req.headers[tok_attr];
   if(!token) return {auth: false, message: "No Token Found"};
   console.log(token);
   return await jwt.verify(token, secret, function(err, dec) {
@@ -70,7 +65,7 @@ var checkValidEmail = async function(email) {
   return true;
 }
 
-var longin_with_req = async (req, res) {
+var login_with_req = async (req, res) => {
   let usr = await getUser(req.body.username);
   let psd = req.body.password;
 
@@ -84,7 +79,8 @@ var loginfunc = async (usr, psd, res) => {
       message: "Username not found"});
   if(usr.password === sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(psd)) ) {
     let tok = jwt.sign({username: usr.username, id: usr.id, seed: process.env.SEED}, secret, { expiresIn: '2h'});
-    return res.status(200).send({auth: true, "x-access-token": tok});
+    let jresp = {auth: true}; jresp[tok_attr] = tok;
+    return res.status(200).send(jresp);
   } else {
     return res.status(406).send({auth: false,
       message: "Incorrect Password"});
